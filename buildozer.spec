@@ -21,7 +21,7 @@ version = 1.0.0
 requirements = python3,kivy
 
 # (str) Icon file
-icon.filename = icono.ico
+# icon.filename = icono.ico
 
 # (str) Supported orientation
 orientation = portrait
