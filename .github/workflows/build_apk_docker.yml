@@ -1,0 +1,28 @@
+name: Build APK (Docker Buildozer)
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: {}
+
+jobs:
+  build_docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+          submodules: true
+
+      - name: Run Buildozer in Docker
+        run: |
+          docker run --rm -v "${{ github.workspace }}":/home/user/host -w /home/user/host kivy/buildozer:latest /bin/bash -lc "python3 -V && buildozer android debug --verbose"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-docker
+          path: bin/*.apk
