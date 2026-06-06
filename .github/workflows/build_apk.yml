@@ -9,8 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      ANDROID_SDK_ROOT: /tmp/android-sdk
-      ANDROID_HOME: /tmp/android-sdk
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout
@@ -21,55 +20,13 @@ jobs:
           lfs: true
           submodules: true
 
-      - name: Install system packages
+      - name: Build APK in Docker
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential git zip unzip curl python3-venv python3-pip python3-dev libffi-dev libssl-dev openjdk-11-jdk
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '11'
-
-      - name: Install Android SDK command-line tools
-        run: |
-          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
-          cd "$ANDROID_SDK_ROOT"
-          curl -sS -o cmdline.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip -q cmdline.zip -d cmdline-tools
-          mkdir -p cmdline-tools/latest
-          mv cmdline-tools/cmdline-tools/* cmdline-tools/latest/ || true
-          yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --licenses || true
-          sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-33" "build-tools;33.0.2" "ndk;25.2.9519653" || true
-
-      - name: Create Python venv and install Buildozer
-        run: |
-          python3 -m venv .venv
-          . .venv/bin/activate
-          pip install --upgrade pip setuptools wheel
-          pip install --prefer-binary cython==0.29.35 buildozer==1.6.0
-
-      - name: Run Buildozer
-        env:
-          ANDROIDSDK: ${{ env.ANDROID_SDK_ROOT }}
-          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
-          ANDROID_NDK_HOME: ${{ env.ANDROID_SDK_ROOT }}/ndk/25.2.9519653
-          ANDROID_NDK_ROOT: ${{ env.ANDROID_NDK_HOME }}
-        run: |
-          set -ex
-          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
-          echo "--- Environment ---"
-          env
-          echo "--- SDK Root contents ---"
-          ls -la "$ANDROID_SDK_ROOT" || true
-          echo "--- Python and buildozer versions ---"
-          . .venv/bin/activate
-          python -V
-          pip show buildozer || true
-          pip show cython || true
-          buildozer --version || true
-          buildozer android debug --verbose || (echo 'Buildozer failed, listing workspace and buildozer.spec' && ls -la || true && cat buildozer.spec || true; exit 1)
+          docker run --rm \
+            -v "${{ github.workspace }}":/home/user/host \
+            -w /home/user/host \
+            kivy/buildozer:latest \
+            /bin/bash -lc "python3 -V && buildozer android debug --verbose"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
