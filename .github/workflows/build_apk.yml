@@ -48,7 +48,7 @@ jobs:
           python3 -m venv .venv
           . .venv/bin/activate
           pip install --upgrade pip setuptools wheel
-          pip install --prefer-binary buildozer==1.6.0
+          pip install --prefer-binary cython==0.29.35 buildozer==1.6.0
 
       - name: Run Buildozer
         env:
@@ -67,6 +67,8 @@ jobs:
           . .venv/bin/activate
           python -V
           pip show buildozer || true
+          pip show cython || true
+          buildozer --version || true
           buildozer android debug --verbose || (echo 'Buildozer failed, listing workspace and buildozer.spec' && ls -la || true && cat buildozer.spec || true; exit 1)
 
       - name: Upload APK artifact
