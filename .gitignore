@@ -1,0 +1,35 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.venv/
+.venv_buildozer/
+.pytest_cache/
+
+# Build artifacts
+build/
+dist/
+bin/
+*.apk
+*.aab
+*.zip
+*.exe
+*.msi
+*.log
+
+# Buildozer
+.buildozer/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+
+# Temporary files
+*.tmp
+*.temp
+*~
