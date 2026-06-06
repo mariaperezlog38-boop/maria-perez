@@ -11,7 +11,6 @@ jobs:
     env:
       ANDROID_SDK_ROOT: /tmp/android-sdk
       ANDROID_HOME: /tmp/android-sdk
-      PATH: /tmp/android-sdk/cmdline-tools/latest/bin:/tmp/android-sdk/platform-tools:$PATH
 
     steps:
       - name: Checkout
@@ -53,6 +52,7 @@ jobs:
           ANDROID_NDK_HOME: ${{ env.ANDROID_SDK_ROOT }}/ndk/25.2.9519653
           ANDROID_NDK_ROOT: ${{ env.ANDROID_NDK_HOME }}
         run: |
+          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
           . .venv/bin/activate
           buildozer android debug --verbose
 
