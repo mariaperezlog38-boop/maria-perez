@@ -19,6 +19,12 @@ jobs:
           flutter-version: 'stable'
           channel: 'stable'
 
+      - name: Verify Flutter environment
+        run: |
+          flutter --version
+          flutter doctor -v
+          yes | flutter doctor --android-licenses || true
+
       - name: Bootstrap Flutter Android app if needed
         run: |
           if [ ! -d calculadora_bcv_flutter/android ]; then
@@ -38,6 +44,10 @@ jobs:
       - name: Get Flutter dependencies
         working-directory: calculadora_bcv_flutter
         run: flutter pub get
+
+      - name: Analyze Flutter project
+        working-directory: calculadora_bcv_flutter
+        run: flutter analyze
 
       - name: Build release APK
         working-directory: calculadora_bcv_flutter

@@ -9,7 +9,7 @@ dependencies:
   flutter:
     sdk: flutter
   math_expressions: ^2.2.0
-  intl: ^0.17.0
+  intl: ^0.18.1
 
 flutter:
   uses-material-design: true
