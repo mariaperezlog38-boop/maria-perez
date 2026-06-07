@@ -13,20 +13,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: 'stable'
-          channel: 'stable'
+      - name: Install Flutter SDK
+        run: |
+          if [ ! -d "$HOME/flutter" ]; then
+            git clone https://github.com/flutter/flutter.git -b stable "$HOME/flutter"
+          fi
+          echo "$HOME/flutter/bin" >> $GITHUB_PATH
+          export PATH="$HOME/flutter/bin:$PATH"
+          flutter --version
+          flutter precache --android
+          flutter config --no-analytics
+          yes | flutter doctor --android-licenses || true
 
       - name: Verify Flutter environment
         run: |
+          export PATH="$HOME/flutter/bin:$PATH"
           flutter --version
           flutter doctor -v
-          yes | flutter doctor --android-licenses || true
 
       - name: Bootstrap Flutter Android app if needed
         run: |
+          export PATH="$HOME/flutter/bin:$PATH"
           if [ ! -d calculadora_bcv_flutter/android ]; then
             flutter create --template app /tmp/flutter_app --platforms=android --project-name calculadora_bcv_flutter --no-pub
             cp -r /tmp/flutter_app/android calculadora_bcv_flutter/
