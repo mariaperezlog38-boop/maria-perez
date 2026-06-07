@@ -52,34 +52,30 @@ Ejecuta la prueba de lógica con:
 
 ## Versión Android
 
-Esta versión móvil usa `main.py` con Kivy para una interfaz táctil.
+Se agregó una nueva versión Flutter en `calculadora_bcv_flutter/` que puede compilar un APK en GitHub Actions.
 
-### Cómo ejecutar en desktop con Kivy
+### Versión Flutter
 
-1. Instala Kivy y dependencias móviles:
+El proyecto Flutter se encuentra en `calculadora_bcv_flutter/`.
 
-```powershell
-& ".venv/Scripts/python.exe" -m pip install -r requirements_android.txt
-```
-
-2. Ejecuta la app Android en el escritorio con:
-
-```powershell
-& ".venv/Scripts/python.exe" "main.py"
-```
-
-### Cómo construir el APK
-
-1. Usa un entorno Linux o WSL con Buildozer instalado.
-2. En la raíz del proyecto, ejecuta:
+Para ejecutar localmente, instala Flutter y el SDK de Android, luego:
 
 ```bash
-buildozer android debug
+cd calculadora_bcv_flutter
+flutter pub get
+flutter run
 ```
 
-3. El APK se generará en `bin/`.
+Para construir el APK localmente:
 
-### Archivos Android
+```bash
+cd calculadora_bcv_flutter
+flutter build apk --release
+```
+
+### Versión Buildozer (anterior)
+
+La versión Kivy/Buildozer sigue disponible en el repositorio, pero la ruta recomendada ahora es usar Flutter.
 
 - `main.py`: entrypoint de la app Android con interfaz Kivy.
 - `buildozer.spec`: configuración de Buildozer para crear el APK.

@@ -1,0 +1,13 @@
+.dart_tool/
+.packages
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.flutter-versions
+.packages
+pubspec.lock
+.idea/
+.vscode/
+*.iml
+android/**/gradle-wrapper.jar

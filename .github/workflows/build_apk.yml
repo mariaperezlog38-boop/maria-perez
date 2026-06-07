@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Flutter APK
 
 on:
   push:
@@ -8,29 +8,43 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          persist-credentials: true
-          lfs: true
-          submodules: true
 
-      - name: Build APK in Docker
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+          channel: 'stable'
+
+      - name: Bootstrap Flutter Android app if needed
         run: |
-          docker run --rm \
-            -v "${{ github.workspace }}":/tmp/src \
-            -w /home/user/host \
-            --entrypoint /bin/bash \
-            kivy/buildozer:latest \
-            -lc "mkdir -p /home/user/host && cp -a /tmp/src/. /home/user/host/ && cd /home/user/host && python3 -V && yes | buildozer android debug --verbose"
+          if [ ! -d calculadora_bcv_flutter/android ]; then
+            flutter create --template app /tmp/flutter_app --platforms=android --project-name calculadora_bcv_flutter --no-pub
+            cp -r /tmp/flutter_app/android calculadora_bcv_flutter/
+            cp /tmp/flutter_app/.gitignore calculadora_bcv_flutter/
+          fi
+
+      - name: Cache Flutter pub packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('calculadora_bcv_flutter/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Get Flutter dependencies
+        working-directory: calculadora_bcv_flutter
+        run: flutter pub get
+
+      - name: Build release APK
+        working-directory: calculadora_bcv_flutter
+        run: flutter build apk --release
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: apk
-          path: bin/*.apk
+          name: app-release-apk
+          path: calculadora_bcv_flutter/build/app/outputs/flutter-apk/*.apk

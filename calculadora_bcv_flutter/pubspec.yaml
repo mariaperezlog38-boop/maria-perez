@@ -1,0 +1,15 @@
+name: calculadora_bcv_flutter
+description: Calculadora BCV portada a Flutter (UI básica + lógica de conversión)
+publish_to: 'none'
+version: 1.0.0+1
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  math_expressions: ^2.2.0
+  intl: ^0.17.0
+
+flutter:
+  uses-material-design: true
